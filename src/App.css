@@ -18,7 +18,7 @@
 }
 
 .product {
-  padding: 0.75rem;
+  padding: 0.85rem;
   margin: 0.5rem;
   display: block;
   flex-basis: 300px;
@@ -51,7 +51,6 @@
 }
 
 .product__image {
-  margin-top: 0.7rem;
   margin-bottom: 0.7rem;
   width: 300px;
   height: 350px;
