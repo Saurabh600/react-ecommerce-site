@@ -3,7 +3,7 @@
 ## Images
 
 **home page**
-![alt](images/home-page.png)
+![home page](/images/home-page.png)
 
 ## LICENSE
 
