@@ -1,10 +1,8 @@
 import { useEffect, useState } from "react";
-import { fetchProductList } from "../api/product";
 import Product from "../components/Product";
-import { TProduct } from "../model";
-
-import "../App.css";
 import Navbar from "../components/Navbar";
+import { fetchProductList } from "../services/api/product";
+import { TProduct } from "../models";
 
 export default function HomePage() {
   const [productList, setProductList] = useState<TProduct[]>([]);

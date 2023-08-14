@@ -1,10 +1,16 @@
-import { signInWithEmailAndPassword } from "firebase/auth";
 import { useRef } from "react";
 import { auth } from "../services/firebase";
+import { useNavigate } from "react-router-dom";
+
+import { signInWithEmailAndPassword } from "firebase/auth";
 
 export default function LoginPage() {
+  const navigate = useNavigate();
   const emailRef = useRef<HTMLInputElement>(null);
   const passwordRef = useRef<HTMLInputElement>(null);
+
+  document.title = "Sign In | React Ecomm Site";
+
   return (
     <>
       <form onSubmit={onSubmit}>
@@ -47,6 +53,7 @@ export default function LoginPage() {
       const user = userCred.user;
       console.log(user);
       alert(`logged in as ${user}`);
+      navigate("/");
     } catch (err) {
       console.log(err);
       alert(`loggin failed: ${err}`);

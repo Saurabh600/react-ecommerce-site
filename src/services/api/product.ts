@@ -1,11 +1,9 @@
 import { collection, getDocs } from "firebase/firestore";
-import { TProduct } from "../model";
-import { TReactSetState } from "../types";
-import { db } from "../services/firebase";
+import { db } from "../firebase";
+import { TSetState } from "../../types";
+import { TProduct } from "../../models";
 
-export async function fetchProductList(
-  setProductList: TReactSetState<TProduct[]>,
-) {
+export async function fetchProductList(setProductList: TSetState<TProduct[]>) {
   try {
     const productsCollection = collection(db, "products");
     const querySnap = await getDocs(productsCollection);

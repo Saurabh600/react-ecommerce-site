@@ -1,10 +1,14 @@
 import { useRef } from "react";
 import { auth } from "../services/firebase";
+import { useNavigate } from "react-router-dom";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 
 export default function SignUpPage() {
+  const navigate = useNavigate();
   const emailRef = useRef<HTMLInputElement>(null);
   const passwordRef = useRef<HTMLInputElement>(null);
+
+  document.title = "Sign Up | React Ecomm Site";
 
   return (
     <>
@@ -52,6 +56,7 @@ export default function SignUpPage() {
       const user = userCred.user;
       console.log(user);
       alert(`user created successfully: ${user}`);
+      navigate("/login");
     } catch (err) {
       console.log(err);
       alert(`signup failed: ${err}`);
