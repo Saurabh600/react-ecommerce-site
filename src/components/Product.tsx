@@ -1,4 +1,4 @@
-import { TProduct } from "../model"
+import { TProduct } from "../model";
 
 export default function Product({ data: product }: { data: TProduct }) {
   return (
@@ -10,5 +10,5 @@ export default function Product({ data: product }: { data: TProduct }) {
       <div className="product__rating">rating {product.rating.rate}</div>
       <div className="product__count">reviews {product.rating.count}</div>
     </a>
-  )
+  );
 }

@@ -1,16 +1,16 @@
-import { useEffect, useState } from "react"
-import { TProduct } from "./model"
-import Product from "./components/Product"
-import { fetchProductList } from "./api/product"
+import { useEffect, useState } from "react";
+import { TProduct } from "./model";
+import Product from "./components/Product";
+import { fetchProductList } from "./api/product";
 
-import "./App.css"
+import "./App.css";
 
 export default function App() {
-  const [productList, setProductList] = useState<TProduct[]>([])
+  const [productList, setProductList] = useState<TProduct[]>([]);
 
   useEffect(() => {
-    fetchProductList(setProductList)
-  }, [])
+    fetchProductList(setProductList);
+  }, []);
 
   return (
     <>
@@ -21,5 +21,5 @@ export default function App() {
         ))}
       </section>
     </>
-  )
+  );
 }
