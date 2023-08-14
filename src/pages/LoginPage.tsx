@@ -28,7 +28,7 @@ export default function LoginPage() {
           required
           placeholder="enter password"
         />
-        <button type="submit">Create Account</button>
+        <button type="submit">Login</button>
       </form>
     </>
   );
@@ -52,7 +52,7 @@ export default function LoginPage() {
       const userCred = await signInWithEmailAndPassword(auth, email, password);
       const user = userCred.user;
       console.log(user);
-      alert(`logged in as ${user}`);
+      alert(`logged in as ${user.uid}`);
       navigate("/");
     } catch (err) {
       console.log(err);
