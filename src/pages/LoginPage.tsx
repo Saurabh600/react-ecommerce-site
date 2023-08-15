@@ -1,62 +1,71 @@
-import { useRef } from "react";
+import { AuthError, signInWithEmailAndPassword } from "firebase/auth";
+import { SubmitHandler, useForm } from "react-hook-form";
 import { auth } from "../services/firebase";
 import { useNavigate } from "react-router-dom";
 
-import { signInWithEmailAndPassword } from "firebase/auth";
+type Inputs = {
+  email: string;
+  password: string;
+};
 
 export default function LoginPage() {
   const navigate = useNavigate();
-  const emailRef = useRef<HTMLInputElement>(null);
-  const passwordRef = useRef<HTMLInputElement>(null);
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<Inputs>();
 
   document.title = "Sign In | React Ecomm Site";
 
+  const onSubmit: SubmitHandler<Inputs> = (data) => {
+    console.log("login form invoked submit request");
+    signInWithEmailAndPassword(auth, data.email, data.password)
+      .then((userCred) => {
+        const user = userCred.user;
+        console.log("loggin successful: ", user.uid);
+        navigate("/");
+      })
+      .catch((err: AuthError) => {
+        console.log({ code: err.code, message: err.message });
+        alert(`Login failed: ${err.message}`);
+      });
+  };
+
   return (
-    <>
-      <form onSubmit={onSubmit}>
-        <input
-          type="email"
-          name="email"
-          ref={emailRef}
-          required
-          placeholder="email@example.com"
-        />
-        <input
-          type="password"
-          name="password"
-          ref={passwordRef}
-          required
-          placeholder="enter password"
-        />
-        <button type="submit">Login</button>
+    <div className="form-wrapper login-form-wrapper">
+      <h1 className="login-form-title">Login</h1>
+      <form className="form login-form" onSubmit={handleSubmit(onSubmit)}>
+        <div className="form-group">
+          <label className="form-label">Email</label>
+          <input
+            className="form-control"
+            type="email"
+            placeholder="example@gmail.com"
+            {...register("email", { required: true })}
+          />
+          {errors.email && <span className="form-text">invalid email</span>}
+        </div>
+        <div className="form-group">
+          <label className="form-label">Password</label>
+          <input
+            className="form-control"
+            type="password"
+            placeholder="enter password"
+            {...register("password", {
+              required: true,
+            })}
+          />
+          {errors.password && (
+            <span className="form-text">invalid password</span>
+          )}
+        </div>
+        <div className="form-group form-group-btn">
+          <button type="submit" className="btn btn-submit">
+            Login
+          </button>
+        </div>
       </form>
-    </>
+    </div>
   );
-
-  async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-    const email = emailRef.current?.value;
-    const password = passwordRef.current?.value;
-
-    if (!email) {
-      alert("email field is required");
-      return;
-    }
-
-    if (!password) {
-      alert("password field is required");
-      return;
-    }
-
-    try {
-      const userCred = await signInWithEmailAndPassword(auth, email, password);
-      const user = userCred.user;
-      console.log(user);
-      alert(`logged in as ${user.uid}`);
-      navigate("/");
-    } catch (err) {
-      console.log(err);
-      alert(`loggin failed: ${err}`);
-    }
-  }
 }
