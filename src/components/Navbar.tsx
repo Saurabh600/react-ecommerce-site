@@ -1,23 +1,19 @@
-import { signOut } from "firebase/auth";
-import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { signOut } from "firebase/auth";
 import { auth } from "../services/firebase";
 
-export default function Navbar() {
-  const [hasLoggedIn, setHasLoggedIn] = useState(false);
+interface Props {
+  hasLoggedIn: boolean;
+}
 
-  useEffect(() => {
-    setHasLoggedIn(() => (auth.currentUser ? true : false));
-  }, []);
-
+const Navbar: React.FC<Props> = ({ hasLoggedIn }) => {
   function onLogOut() {
     signOut(auth)
       .then(() => {
         alert("Logged Out Successfully!");
-        setHasLoggedIn(() => false);
       })
-      .catch((e) => {
-        alert(`Logout failed, error: ${e}`);
+      .catch((e: Error) => {
+        alert(`Logout failed, error: ${e.message}`);
       });
   }
 
@@ -54,4 +50,6 @@ export default function Navbar() {
       </nav>
     </header>
   );
-}
+};
+
+export default Navbar;
