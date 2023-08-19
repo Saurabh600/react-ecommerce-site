@@ -1,11 +1,51 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
 import { auth } from "../services/firebase";
 import { onAuthStateChanged } from "firebase/auth";
 
+import { NotLogegedIn } from "../components/common/NotLoggedIn";
+import { Loading } from "../components/common/Loading";
+
+import { TSetState } from "../types";
+
+const UserUpdateForm = ({
+  setShowUpdateDialogue,
+}: {
+  setShowUpdateDialogue: TSetState<boolean>;
+}) => {
+  const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setShowUpdateDialogue(() => false);
+  };
+
+  return (
+    <form onSubmit={onSubmit}>
+      <div className="form-group">
+        <label htmlFor="" className="form-label"></label>
+        <input type="text" className="form-field" />
+      </div>
+      <div className="form-group">
+        <label htmlFor="" className="form-label"></label>
+        <input type="text" className="form-field" />
+      </div>
+      <div className="form-group">
+        <label htmlFor="" className="form-label"></label>
+        <input type="text" className="form-field" />
+      </div>
+      <div className="form-group">
+        <label htmlFor="" className="form-label"></label>
+        <input type="text" className="form-field" />
+      </div>
+      <div>
+        <button type="submit">Update</button>
+      </div>
+    </form>
+  );
+};
+
 const Dashboard = () => {
-  const [hasLoggedIn, setHasLoggedIn] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [hasLoggedIn, setHasLoggedIn] = useState(false);
+  const [showUpdateDialogue, setShowUpdateDialogue] = useState(false);
 
   onAuthStateChanged(auth, () => {
     const user = auth.currentUser;
@@ -16,24 +56,21 @@ const Dashboard = () => {
     }
 
     setHasLoggedIn(() => true);
-    setIsLoading(() => true);
+    setIsLoading(() => false);
   });
 
   if (isLoading) {
-    return (
-      <div>
-        <h1>Loading...</h1>
-      </div>
-    );
+    return <Loading />;
   }
 
   if (!hasLoggedIn) {
+    return <NotLogegedIn />;
+  }
+
+  if (showUpdateDialogue) {
     return (
-      <div>
-        <h1>You're not loggedIn,</h1>
-        <p>
-          login: <Link to="/login" />
-        </p>
+      <div className="update-user-wrapper">
+        <UserUpdateForm setShowUpdateDialogue={setShowUpdateDialogue} />
       </div>
     );
   }
