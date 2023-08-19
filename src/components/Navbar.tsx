@@ -2,11 +2,7 @@ import { Link } from "react-router-dom";
 import { signOut } from "firebase/auth";
 import { auth } from "../services/firebase";
 
-interface Props {
-  hasLoggedIn: boolean;
-}
-
-const Navbar: React.FC<Props> = ({ hasLoggedIn }) => {
+const Navbar = ({ login }: { login: boolean }) => {
   function onClick() {
     signOut(auth)
       .then(() => {
@@ -22,7 +18,7 @@ const Navbar: React.FC<Props> = ({ hasLoggedIn }) => {
       <nav className="nav">
         <h1 className="nav-title">React Firebase Ecommerce Site</h1>
         <ul className="nav-list">
-          {hasLoggedIn ? (
+          {login ? (
             <li className="nav-item">
               <button
                 type="button"

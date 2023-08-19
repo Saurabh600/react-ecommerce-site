@@ -1,24 +1,21 @@
-import { useEffect, useState } from "react";
-import Footer from "../components/Footer";
-import Navbar from "../components/Navbar";
-import Products from "../components/Products";
+import { useState } from "react";
 import { auth } from "../services/firebase";
 import { onAuthStateChanged } from "firebase/auth";
 
-export default function HomePage() {
-  const [hasLoggedIn, setHasLoggedIn] = useState(false);
+import Footer from "../components/Footer";
+import Navbar from "../components/Navbar";
+import Products from "../components/Products";
 
-  useEffect(() => {
-    setHasLoggedIn(() => (auth.currentUser ? true : false));
-  }, []);
+export default function HomePage() {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   onAuthStateChanged(auth, () => {
-    setHasLoggedIn(() => (auth.currentUser ? true : false));
+    setIsAuthenticated(() => (auth.currentUser ? true : false));
   });
 
   return (
     <>
-      <Navbar hasLoggedIn={hasLoggedIn} />
+      <Navbar login={isAuthenticated} />
       <main className="main-wrapper">
         <Products />
       </main>
