@@ -7,7 +7,7 @@ interface Props {
 }
 
 const Navbar: React.FC<Props> = ({ hasLoggedIn }) => {
-  function onLogOut() {
+  function onClick() {
     signOut(auth)
       .then(() => {
         alert("Logged Out Successfully!");
@@ -27,7 +27,7 @@ const Navbar: React.FC<Props> = ({ hasLoggedIn }) => {
               <button
                 type="button"
                 className="btn btn-logout"
-                onClick={onLogOut}
+                onClick={onClick}
               >
                 Log Out
               </button>
