@@ -70,7 +70,7 @@ export default function NewHomePage() {
     setIsAuthenticated(() => true);
   });
 
-  const onClearSelection = () => {
+  function onClearSelection() {
     fetch("https://dummyjson.com/products")
       .then((res) => res.json())
       .then((data) => {
@@ -80,11 +80,11 @@ export default function NewHomePage() {
         console.log(`failed to fetch data: ${err.message}`);
         alert(`failed to fetch data: ${err.message}`);
       });
-  };
+  }
 
-  const onSelectCategory = (
+  function onSelectCategory(
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>
-  ) => {
+  ) {
     const target = e.target as HTMLButtonElement;
     const category = target.getAttribute("data-category-type")!;
 
@@ -97,7 +97,7 @@ export default function NewHomePage() {
         console.log(`failed to fetch data: ${err.message}`);
         alert(`failed to fetch data: ${err.message}`);
       });
-  };
+  }
 
   return (
     <>
@@ -157,8 +157,4 @@ export default function NewHomePage() {
       <Footer />
     </>
   );
-}
-
-function Button({ category, text }: { category: string; text: string }) {
-  return <button></button>;
 }
