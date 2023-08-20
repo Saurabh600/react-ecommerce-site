@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 
-export const NotLogegedIn = () => {
+export const NotLoggedIn = () => {
   return (
     <div>
       <h1>You're not loggedIn,</h1>

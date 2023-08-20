@@ -2,7 +2,7 @@ import { useState } from "react";
 import { auth } from "../services/firebase";
 import { onAuthStateChanged } from "firebase/auth";
 
-import { NotLogegedIn } from "../components/common/NotLoggedIn";
+import { NotLoggedIn } from "../components/common/NotLoggedIn";
 import { Loading } from "../components/common/Loading";
 
 import { TSetState } from "../types";
@@ -18,27 +18,29 @@ const UserUpdateForm = ({
   };
 
   return (
-    <form onSubmit={onSubmit}>
-      <div className="form-group">
-        <label htmlFor="" className="form-label"></label>
-        <input type="text" className="form-field" />
-      </div>
-      <div className="form-group">
-        <label htmlFor="" className="form-label"></label>
-        <input type="text" className="form-field" />
-      </div>
-      <div className="form-group">
-        <label htmlFor="" className="form-label"></label>
-        <input type="text" className="form-field" />
-      </div>
-      <div className="form-group">
-        <label htmlFor="" className="form-label"></label>
-        <input type="text" className="form-field" />
-      </div>
-      <div>
-        <button type="submit">Update</button>
-      </div>
-    </form>
+    <div className="form-wrapper">
+      <form className="form form-user-update" onSubmit={onSubmit}>
+        <div className="form-group">
+          <label htmlFor="" className="form-label"></label>
+          <input type="text" className="form-field" />
+        </div>
+        <div className="form-group">
+          <label htmlFor="" className="form-label"></label>
+          <input type="text" className="form-field" />
+        </div>
+        <div className="form-group">
+          <label htmlFor="" className="form-label"></label>
+          <input type="text" className="form-field" />
+        </div>
+        <div className="form-group">
+          <label htmlFor="" className="form-label"></label>
+          <input type="text" className="form-field" />
+        </div>
+        <div>
+          <button type="submit">Update</button>
+        </div>
+      </form>
+    </div>
   );
 };
 
@@ -64,15 +66,11 @@ const Dashboard = () => {
   }
 
   if (!hasLoggedIn) {
-    return <NotLogegedIn />;
+    return <NotLoggedIn />;
   }
 
   if (showUpdateDialogue) {
-    return (
-      <div className="update-user-wrapper">
-        <UserUpdateForm setShowUpdateDialogue={setShowUpdateDialogue} />
-      </div>
-    );
+    return <UserUpdateForm setShowUpdateDialogue={setShowUpdateDialogue} />;
   }
 
   return (
