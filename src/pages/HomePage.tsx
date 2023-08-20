@@ -1,26 +1,13 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "../services/firebase";
+import { TProduct } from "../types";
 
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 
 import "../assets/css/homepage.css";
-import { Link } from "react-router-dom";
-
-interface TProduct {
-  id: number;
-  title: string;
-  description: string;
-  price: number;
-  discountPercentage: number;
-  rating: number;
-  stock: number;
-  brand: string;
-  category: string;
-  thumbnail: string;
-  images: string[];
-}
 
 export default function NewHomePage() {
   const [products, setProducts] = useState<TProduct[]>([]);

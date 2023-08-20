@@ -1,62 +1,44 @@
-import { collection, getDocs, query, where } from "firebase/firestore";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { db } from "../services/firebase";
-import { TProduct } from "../models";
-import { Rating } from "../components/common/Rating";
+import { TProduct } from "../types";
 
 export default function ProductPage() {
-  const { id: productId } = useParams();
   const [product, setProduct] = useState<TProduct>();
 
-  useEffect(() => {
-    const productQuery = query(
-      collection(db, "products"),
-      where("id", "==", Number(productId))
-    );
-    getDocs(productQuery)
-      .then((docSnap) => {
-        docSnap.forEach((doc) => {
-          console.log(doc.id);
-          setProduct(() => doc.data() as TProduct);
-        });
-      })
-      .catch((err: Error) => {
-        alert("failed to load data");
-        console.log(err.message);
-      });
-  }, []);
+  const { id } = useParams();
 
-  const onClick = () => {
-    alert("Working on this feature");
-  };
+  useEffect(() => {
+    if (Number(id) > 100) return;
+    fetch(`https://dummyjson.com/products/${id}`)
+      .then((res) => res.json())
+      .then((data) => setProduct(() => data))
+      .catch((err) => console.log(err));
+  }, []);
 
   if (!product) {
     return (
       <div>
-        <h1>Loading...</h1>
+        <h1>Proudct is not available</h1>
       </div>
     );
   }
 
   return (
-    <div className="product-page">
-      <img
-        className="product-page-image"
-        src={product.image}
-        alt="product image"
-      />
-      <div className="product-page-content-wrapper">
-        <h1 className="product-page-title">{product.title}</h1>
-        <div className="product-page-category">{product.category}</div>
-        <p className="product-page-desc">{product.description}</p>
-        <Rating count={product.rating.rate} />
-        <div className="product-page-count">{product.rating.count} reviews</div>
-        <div className="product-page-price">${product.price}</div>
-        <button className="btn btn-buy" onClick={onClick}>
-          Buy Now
-        </button>
+    <main className="main-container">
+      <div className="product-left">
+        <div className="image-list">
+          {product.images.map((url) => (
+            <img key={url} src={url} alt="url" />
+          ))}
+        </div>
+        <img src={product.thumbnail} alt="" />
       </div>
-    </div>
+      <div className="product-right">
+        <h1 className="product-title">{product.title}</h1>
+        <div className="product-desc">{product.description}</div>
+        <div className="product-price">{product.price}</div>
+        <div className="product-rating">{product.rating}</div>
+      </div>
+    </main>
   );
 }
