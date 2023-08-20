@@ -1,50 +1,43 @@
 import { Link } from "react-router-dom";
-import { signOut } from "firebase/auth";
-import { auth } from "../services/firebase";
 
-const Navbar = ({ login }: { login: boolean }) => {
-  function onClick() {
-    signOut(auth)
-      .then(() => {
-        alert("Logged Out Successfully!");
-      })
-      .catch((e: Error) => {
-        alert(`Logout failed, error: ${e.message}`);
-      });
-  }
+import "../assets/css/navbar.css";
 
+const Navbar = () => {
   return (
-    <header className="nav-header">
-      <nav className="nav">
-        <h1 className="nav-title">React Firebase Ecommerce Site</h1>
-        <ul className="nav-list">
-          {login ? (
-            <li className="nav-item">
-              <button
-                type="button"
-                className="btn btn-logout"
-                onClick={onClick}
-              >
-                Log Out
-              </button>
-            </li>
-          ) : (
-            <>
-              <li className="nav-item">
-                <Link to="/login" className="nav-link nav-login">
-                  Login
-                </Link>
-              </li>
-              <li className="nav-item">
-                <Link to="/signup" className="nav-link nav-signup">
-                  Sign Up
-                </Link>
-              </li>
-            </>
-          )}
-        </ul>
-      </nav>
-    </header>
+    <nav className="nav">
+      <ul className="nav-list">
+        <li className="nav-item">
+          <Link className="nav-link" to="/">
+            Home
+          </Link>
+        </li>
+        <li className="nav-item">
+          <Link className="nav-link" to="/about">
+            About
+          </Link>
+        </li>
+        <li className="nav-item">
+          <Link className="nav-link" to="/offers">
+            Offers
+          </Link>
+        </li>
+        <li className="nav-item">
+          <Link className="nav-link" to="/accout">
+            Account
+          </Link>
+        </li>
+        <li className="nav-item">
+          <Link className="nav-link" to="/checkout">
+            Cart
+          </Link>
+        </li>
+        <li className="nav-item">
+          <Link className="nav-link" to="">
+            Category
+          </Link>
+        </li>
+      </ul>
+    </nav>
   );
 };
 
