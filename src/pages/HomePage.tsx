@@ -58,6 +58,7 @@ export default function NewHomePage() {
   });
 
   function onClearSelection() {
+    document.title = "React Shopping Site";
     fetch("https://dummyjson.com/products")
       .then((res) => res.json())
       .then((data) => {
@@ -75,6 +76,8 @@ export default function NewHomePage() {
     const target = e.target as HTMLButtonElement;
     const category = target.getAttribute("data-category-type")!;
 
+    document.title = `${category} | React Shopping Cart`;
+
     fetch(`https://dummyjson.com/products/category/${category}`)
       .then((res) => res.json())
       .then((data) => {
@@ -86,12 +89,14 @@ export default function NewHomePage() {
       });
   }
 
+  document.title = "React Shopping Site";
+
   return (
     <>
       <Navbar />
       <main className="main-container">
         <section className="side-bar">
-          <div className="about">
+          <div id="about" className="about">
             <p className="about-text">
               A modern and feature-rich ecommerce project! 🛒🚀 built using
               React.js and Firebase.
@@ -125,7 +130,12 @@ export default function NewHomePage() {
         </section>
         <section className="product-section">
           {products.map((data) => (
-            <div key={data.id.toString()} className="product">
+            <Link
+              key={data.id.toString()}
+              className="product"
+              to={`/product/${data.id}`}
+              target="_blank"
+            >
               <img
                 src={data.thumbnail}
                 className="product-image"
@@ -137,7 +147,7 @@ export default function NewHomePage() {
                 <small className="text-small-lg">.99</small>
               </div>
               <button className="btn btn-checkout">Add to Cart</button>
-            </div>
+            </Link>
           ))}
         </section>
       </main>
