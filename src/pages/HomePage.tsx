@@ -1,7 +1,5 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { onAuthStateChanged } from "firebase/auth";
-import { auth } from "../services/firebase";
 import { TProduct } from "../types";
 
 import Navbar from "../components/Navbar";
@@ -9,9 +7,16 @@ import Footer from "../components/Footer";
 
 import "../assets/css/homepage.css";
 
+type ProductsSectionProps = {
+  products: TProduct[];
+};
+
 export default function NewHomePage() {
   const [products, setProducts] = useState<TProduct[]>([]);
-  const [_, setIsAuthenticated] = useState(false);
+  const [loading, setLoading] = useState(true);
+
+  let btnController: AbortController | null = null;
+  let clearController: AbortController | null = null;
 
   const categoryList = [
     "smartphones",
@@ -37,59 +42,75 @@ export default function NewHomePage() {
   ];
 
   useEffect(() => {
+    // setting window title
+    document.title = "React Shopping Site";
+
+    // fetching data & modifying product state
     fetch("https://dummyjson.com/products")
       .then((res) => res.json())
       .then((data) => {
         setProducts(() => data.products);
+        setLoading(false);
       })
       .catch((err: Error) => {
         console.log(`failed to fetch data: ${err.message}`);
-        alert(`failed to fetch data: ${err.message}`);
       });
   }, []);
 
-  onAuthStateChanged(auth, (user) => {
-    if (!user) {
-      setIsAuthenticated(() => false);
-      return;
-    }
+  const onClearSelection = () => {
+    // aborting previous api call
+    if (clearController) clearController.abort();
+    setLoading(true);
 
-    setIsAuthenticated(() => true);
-  });
-
-  function onClearSelection() {
+    // setting window title
     document.title = "React Shopping Site";
-    fetch("https://dummyjson.com/products")
+
+    const newController = new AbortController();
+    // fetching data & modifying products state
+    fetch("https://dummyjson.com/products", { signal: newController.signal })
       .then((res) => res.json())
       .then((data) => {
         setProducts(() => data.products);
+        setLoading(false);
       })
       .catch((err: Error) => {
         console.log(`failed to fetch data: ${err.message}`);
-        alert(`failed to fetch data: ${err.message}`);
       });
-  }
 
-  function onSelectCategory(
+    // setting new abort controlller
+    clearController = newController;
+  };
+
+  const onSelectCategory = (
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>
-  ) {
+  ) => {
+    // aborting previous api call
+    if (btnController) btnController.abort();
+    setLoading(true);
+
     const target = e.target as HTMLButtonElement;
     const category = target.getAttribute("data-category-type")!;
 
+    // changing window title
     document.title = `${category} | React Shopping Cart`;
 
-    fetch(`https://dummyjson.com/products/category/${category}`)
+    const newController = new AbortController();
+    // fetching data & modifying products state
+    fetch(`https://dummyjson.com/products/category/${category}`, {
+      signal: newController.signal,
+    })
       .then((res) => res.json())
       .then((data) => {
         setProducts(() => data.products);
+        setLoading(false);
       })
       .catch((err: Error) => {
         console.log(`failed to fetch data: ${err.message}`);
-        alert(`failed to fetch data: ${err.message}`);
       });
-  }
 
-  document.title = "React Shopping Site";
+    // setting new abort controller
+    btnController = newController;
+  };
 
   return (
     <>
@@ -128,30 +149,32 @@ export default function NewHomePage() {
             </button>
           </div>
         </section>
-        <section className="product-section">
-          {products.map((data) => (
-            <Link
-              key={data.id.toString()}
-              className="product"
-              to={`/product/${data.id}`}
-              target="_blank"
-            >
-              <img
-                src={data.thumbnail}
-                className="product-image"
-                alt="images"
-              />
-              <div className="product-title">{data.title}</div>
-              <div className="product-price">
-                <small className="text-small">$</small> <b>{data.price}</b>
-                <small className="text-small-lg">.99</small>
-              </div>
-              <button className="btn btn-checkout">Add to Cart</button>
-            </Link>
-          ))}
-        </section>
+        {loading ? <div></div> : <ProductsSection products={products} />}
       </main>
       <Footer />
     </>
+  );
+}
+
+function ProductsSection({ products }: ProductsSectionProps) {
+  return (
+    <section className="product-section">
+      {products.map((data) => (
+        <Link
+          key={data.id.toString()}
+          className="product"
+          to={`/product/${data.id}`}
+          target="_blank"
+        >
+          <img src={data.thumbnail} className="product-image" alt="images" />
+          <div className="product-title">{data.title}</div>
+          <div className="product-price">
+            <small className="text-small">$</small> <b>{data.price}</b>
+            <small className="text-small-lg">.99</small>
+          </div>
+          <button className="btn btn-checkout">Add to Cart</button>
+        </Link>
+      ))}
+    </section>
   );
 }
