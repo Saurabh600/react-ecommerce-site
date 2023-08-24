@@ -5,8 +5,6 @@ import { TProduct } from "../types";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 
-import "../assets/css/homepage.css";
-
 type ProductsSectionProps = {
   products: TProduct[];
 };
@@ -115,28 +113,30 @@ export default function NewHomePage() {
   return (
     <>
       <Navbar />
-      <main className="main-container">
-        <section className="side-bar">
-          <div id="about" className="about">
-            <p className="about-text">
+      <main className="grid grid-cols-4 gap-x-6">
+        <section className="p-4 bg-white col-span-1">
+          <div id="about" className="mb-4">
+            <p className="">
               A modern and feature-rich ecommerce project! 🛒🚀 built using
-              React.js and Firebase.
+              React.js and Firebase.{" "}
+              <Link
+                className="no-underline text-blue-600 text-sm"
+                to="https://github.com/saurabh600/react-ecommerce-site"
+                target="_blank"
+              >
+                Github
+              </Link>
             </p>
-            <Link
-              className="link"
-              to="https://github.com/saurabh600/react-ecommerce-site"
-              target="_blank"
-            >
-              Github
-            </Link>
           </div>
           <div>
-            <div className="">Select by Category</div>
+            <div className="bg-neutral-800 text-white p-3 rounded-lg">
+              Select by Category
+            </div>
             <div className="category-list">
               {categoryList.map((category) => (
                 <button
                   key={category}
-                  className="btn btn-category"
+                  className="inline-block px-2 py-3 text-sm m-2 bg-slate-100 border border-solid border-transparent rounded-sm cursor-pointer"
                   data-category-type={category}
                   onClick={onSelectCategory}
                 >
@@ -144,7 +144,10 @@ export default function NewHomePage() {
                 </button>
               ))}
             </div>
-            <button className="btn btn-clear" onClick={onClearSelection}>
+            <button
+              className="py-3 px-4 text-base text-white bg-neutral-900 border border-solid border-transparent rounded"
+              onClick={onClearSelection}
+            >
               Clear Selection
             </button>
           </div>
@@ -158,21 +161,28 @@ export default function NewHomePage() {
 
 function ProductsSection({ products }: ProductsSectionProps) {
   return (
-    <section className="product-section">
+    <section className="col-span-3 grid grid-cols-4 gap-x-9 gap-y-4">
       {products.map((data) => (
         <Link
           key={data.id.toString()}
-          className="product"
+          className="flex flex-col justify-between no-underline text-inherit p-4 bg-slate-100 rounded"
           to={`/product/${data.id}`}
           target="_blank"
         >
-          <img src={data.thumbnail} className="product-image" alt="images" />
-          <div className="product-title">{data.title}</div>
-          <div className="product-price">
-            <small className="text-small">$</small> <b>{data.price}</b>
-            <small className="text-small-lg">.99</small>
+          <img
+            src={data.thumbnail}
+            className="block w-full h-[300px]"
+            alt="images"
+          />
+          <div className="text-center text-lg my-4">{data.title}</div>
+          <div className="text-center">
+            <small className="text-sm">$</small>{" "}
+            <b className="text-lg">{data.price}</b>
+            <small className="text-base">.99</small>
           </div>
-          <button className="btn btn-checkout">Add to Cart</button>
+          <button className="py-3 text-base text-white bg-neutral-800 border-none cursor-pointer transition">
+            Add to Cart
+          </button>
         </Link>
       ))}
     </section>
