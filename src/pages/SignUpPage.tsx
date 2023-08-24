@@ -1,11 +1,17 @@
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { auth } from "../services/firebase";
-import { AuthError, createUserWithEmailAndPassword } from "firebase/auth";
+import {
+  AuthError,
+  createUserWithEmailAndPassword,
+  signInWithCredential,
+  signInWithEmailAndPassword,
+} from "firebase/auth";
 
 type Inputs = {
   email: string;
   password: string;
+  auto_login: boolean;
 };
 
 export default function SignUpPage() {
@@ -17,11 +23,18 @@ export default function SignUpPage() {
   } = useForm<Inputs>();
 
   const onSubmit: SubmitHandler<Inputs> = (data) => {
-    console.log("form invoked submit request");
     createUserWithEmailAndPassword(auth, data.email, data.password)
-      .then((userCred) => {
-        const user = userCred.user;
-        alert(`user created with id: ${user.uid}`);
+      .then(() => {
+        alert("account created successfully");
+        if (data.auto_login) {
+          signInWithEmailAndPassword(auth, data.email, data.password).catch(
+            (err: Error) => {
+              alert(`auto login failed, error: ${err.message}`);
+            }
+          );
+          navigate("/");
+          return;
+        }
         navigate("/login");
       })
       .catch((err: AuthError) => {
@@ -32,39 +45,62 @@ export default function SignUpPage() {
   document.title = "Sign Up | React Ecomm Site";
 
   return (
-    <div className="form-wrapper login-form-wrapper">
-      <h1 className="login-form-title">Create New Account</h1>
-      <form className="form login-form" onSubmit={handleSubmit(onSubmit)}>
-        <div className="form-group">
-          <label className="form-label">Email</label>
+    <div className="w-screen h-screen flex flex-col justify-center items-center bg-white">
+      <form
+        className="w-[32rem] min-w-max flex flex-col p-6 bg-gray-100 rounded text-lg"
+        onSubmit={handleSubmit(onSubmit)}
+      >
+        <h1 className="text-red-500 text-center text-3xl font-medium mb-6">
+          Create New Account
+        </h1>
+        <input
+          className="p-2 rounded-sm text-base"
+          type="email"
+          placeholder="Enter Your Email"
+          {...register("email", { required: "email is required" })}
+        />
+        {errors.email && (
+          <span className="text-red-500 text-sm mt-1">
+            {errors.email.message}
+          </span>
+        )}
+        <input
+          className="p-2 rounded-sm mt-4"
+          type="password"
+          placeholder="Enter Your Password"
+          {...register("password", {
+            required: "password is required",
+            min: "lenght must be 8",
+            max: "lenght must not exced 15",
+            minLength: 8,
+            maxLength: 15,
+          })}
+        />
+        {errors.password && (
+          <span className="text-red-500 text-sm mt-1">
+            {errors.password.message}
+          </span>
+        )}
+        <div className="mt-4 space-x-4">
           <input
-            className="form-control"
-            type="email"
-            placeholder="example@gmail.com"
-            {...register("email", { required: true })}
+            type="checkbox"
+            className="w-4 h-4"
+            defaultChecked
+            {...register("auto_login")}
           />
-          {errors.email && <span className="form-text">invalid email</span>}
+          <span className="text-neutral-600 text-base">Auto Login</span>
         </div>
-        <div className="form-group">
-          <label className="form-label">Password</label>
-          <input
-            className="form-control"
-            type="password"
-            placeholder="enter password"
-            {...register("password", {
-              required: true,
-              minLength: 8,
-              maxLength: 15,
-            })}
-          />
-          {errors.password && (
-            <span className="form-text">invalid password</span>
-          )}
-        </div>
-        <div className="form-group form-group-btn">
-          <button type="submit" className="btn btn-submit">
-            Sign Up
-          </button>
+        <button
+          type="submit"
+          className="px-2 py-3 bg-green-500 hover:bg-green-600 text-white rounded mt-4"
+        >
+          Sign Up
+        </button>
+        <div className="text-sm text-gray-500 mt-1">
+          Already a user,{" "}
+          <Link className="text-blue-400 hover:text-blue-600" to={"/login"}>
+            login?
+          </Link>
         </div>
       </form>
     </div>
