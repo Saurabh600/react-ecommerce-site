@@ -20,7 +20,7 @@ export default function ProductPage() {
       .then((data) => setProduct(() => data))
       .then(() => setLoading(() => false))
       .catch((err) => console.log(err));
-  }, []);
+  }, [id]);
 
   function onClickImage(e: React.MouseEvent<HTMLImageElement, MouseEvent>) {
     const target = e.target as HTMLImageElement;
@@ -53,7 +53,7 @@ export default function ProductPage() {
     );
   }
 
-  document.title = `${product.title} | React Shopping Cart`
+  document.title = `${product.title} | React Shopping Cart`;
 
   return (
     <div>

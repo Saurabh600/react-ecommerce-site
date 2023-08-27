@@ -4,7 +4,6 @@ import { auth } from "../services/firebase";
 import {
   AuthError,
   createUserWithEmailAndPassword,
-  signInWithCredential,
   signInWithEmailAndPassword,
 } from "firebase/auth";
 
@@ -24,8 +23,8 @@ export default function SignUpPage() {
 
   const onSubmit: SubmitHandler<Inputs> = (data) => {
     createUserWithEmailAndPassword(auth, data.email, data.password)
-      .then(() => {
-        alert("account created successfully");
+      .then((user) => {
+        alert(`account created successfully, uid: ${user.user.uid}`);
         if (data.auto_login) {
           signInWithEmailAndPassword(auth, data.email, data.password).catch(
             (err: Error) => {

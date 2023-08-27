@@ -1,55 +1,71 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
-import { TProduct } from "../../types";
+import { onAuthStateChanged } from "firebase/auth";
+import { auth } from "../../services/firebase";
+
 import Navbar from "../../components/Navbar";
 import Footer from "../../components/Footer";
 import ProductsSection from "./ProductSection";
 import CategoryList from "./CategoryList";
+import CartSection from "./CartSection";
+
+import { TProduct } from "../../types";
 
 const HomePage = () => {
+  const [isLogged, setIsLogged] = useState(false);
   const [products, setProducts] = useState<TProduct[]>([]);
   const [loading, setLoading] = useState(true);
+  const [showCart, setShowCart] = useState(false);
+  const [showCategory, setShowCategory] = useState(false);
 
   useEffect(() => {
     // setting window title
     document.title = "React Shopping Site";
 
+    // on auth sate change
+    onAuthStateChanged(auth, (user) => {
+      setIsLogged(() => (user ? true : false));
+    });
+
     // fetching data & modifying product state
-    fetch("https://dummyjson.com/products")
+    const controller = new AbortController();
+    fetch("https://dummyjson.com/products?limit=20", {
+      signal: controller.signal,
+    })
       .then((res) => res.json())
       .then((data) => {
         setProducts(() => data.products);
         setLoading(false);
       })
       .catch((err: Error) => {
-        console.log(`failed to fetch data: ${err.message}`);
+        console.log(err);
       });
+
+    return () => controller.abort();
   }, []);
 
   return (
-    <>
-      <Navbar />
-      <main className="grid grid-cols-4 gap-x-6">
-        <section className="p-4 bg-white col-span-1">
-          <div id="about" className="mb-4">
-            <p className="">
-              A modern and feature-rich ecommerce project! 🛒🚀 built using
-              React.js and Firebase.{" "}
-              <Link
-                className="no-underline text-blue-600 text-sm"
-                to="https://github.com/saurabh600/react-ecommerce-site"
-                target="_blank"
-              >
-                Github
-              </Link>
-            </p>
-          </div>
+    <div className="relative bg-gray-900">
+      <Navbar
+        isLogged={isLogged}
+        setShowCart={setShowCart}
+        setShowCategory={setShowCategory}
+      />
+      {showCart && <CartSection setShowCart={setShowCart} />}
+      <main className="m-4 max-w-6xl mx-auto">
+        {showCategory && (
           <CategoryList setLoading={setLoading} setProducts={setProducts} />
+        )}
+        <section>
+          <div className="text-gray-100 text-lg mb-3">
+            {products.length} product(s) found.
+          </div>
+          <div className="grid grid-cols-4 gap-4">
+            {!loading && <ProductsSection data={products} />}
+          </div>
         </section>
-        {loading ? <div></div> : <ProductsSection data={products} />}
       </main>
       <Footer />
-    </>
+    </div>
   );
 };
 

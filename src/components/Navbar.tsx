@@ -1,71 +1,85 @@
+import { signOut } from "firebase/auth";
 import { Link } from "react-router-dom";
-import github_icon from "../assets/images/github-icon.png";
+import { auth } from "../services/firebase";
+import { TSetState } from "../types";
 
-const Navbar = () => {
+type Props = {
+  isLogged: boolean;
+  setShowCategory: TSetState<boolean>;
+  setShowCart: TSetState<boolean>;
+};
+
+const Navbar: React.FC<Props> = ({
+  isLogged,
+  setShowCart,
+  setShowCategory,
+}) => {
   return (
-    <nav className="flex justify-between py-3 mb-8 bg-neutral-800">
-      <Link
-        className="ml-2"
-        to={"https://github.com/saurabh600/react-ecommerce-site/"}
-      >
-        <img
-          className="block w-8 h-8 p-1 rounded hover:bg-blue-600 hover:text-blue-400"
-          src={github_icon}
-          alt="github"
-        />
-      </Link>
-      <ul className="flex justify-center items-center list-none space-x-2">
-        <li className="nav-item">
-          <Link
-            className="py-1 px-2 text-sm no-underline block text-slate-50 bg-gray-800 rounded-sm border-transparent border border-solid hover:border-blue-500 hover:text-blue-500"
-            to="/"
+    <header className="flex items-center py-2 bg-gray-950 text-gray-200">
+      <nav className="mx-auto">
+        <ul className="flex list-none space-x-1.5 first:ml-0 last:mr-0">
+          <li>
+            <Link
+              to="/"
+              className="no-underline block py-1.5 px-3 border-b border-solid border-transparent hover:border-blue-600 hover:bg-gray-800"
+            >
+              Home
+            </Link>
+          </li>
+          <li>
+            <Link
+              to="#about"
+              className="block no-underline py-1.5 px-3 border-b border-solid border-transparent hover:border-blue-600 hover:bg-gray-800"
+            >
+              About
+            </Link>
+          </li>
+          <li>
+            <button
+              onClick={() => setShowCategory((prev) => !prev)}
+              className="py-1.5 px-3 border-b border-solid border-transparent hover:border-blue-600 hover:bg-gray-800"
+            >
+              Category
+            </button>
+          </li>
+          <li>
+            <button
+              onClick={() => setShowCart((prev) => !prev)}
+              className="py-1.5 px-3 border-b border-solid border-transparent hover:border-blue-600 hover:bg-gray-800"
+            >
+              Cart
+            </button>
+          </li>
+        </ul>
+      </nav>
+      <div className="mr-2 space-x-2">
+        {isLogged ? (
+          <button
+            onClick={() => signOut(auth)}
+            className="py-1.5 px-3 border border-solid border-blue-600 hover:bg-gray-800 rounded text-sm"
           >
-            Home
-          </Link>
-        </li>
-        <li className="nav-item">
-          <Link
-            className="py-1 px-2 text-sm no-underline block text-slate-50 bg-gray-800 rounded-sm border-transparent border border-solid hover:border-blue-500 hover:text-blue-500"
-            to="/#about"
-          >
-            About
-          </Link>
-        </li>
-        <li className="nav-item">
-          <Link
-            className="py-1 px-2 text-sm no-underline block text-slate-50 bg-gray-800 rounded-sm border-transparent border border-solid hover:border-blue-500 hover:text-blue-500"
-            to="/offers"
-          >
-            Offers
-          </Link>
-        </li>
-        <li className="nav-item">
-          <Link
-            className="py-1 px-2 text-sm no-underline block text-slate-50 bg-gray-800 rounded-sm border-transparent border border-solid hover:border-blue-500 hover:text-blue-500"
-            to="/accout"
-          >
-            Account
-          </Link>
-        </li>
-        <li className="nav-item">
-          <Link
-            className="py-1 px-2 text-sm no-underline block text-slate-50 bg-gray-800 rounded-sm border-transparent border border-solid hover:border-blue-500 hover:text-blue-500"
-            to="/checkout"
-          >
-            Cart
-          </Link>
-        </li>
-        <li className="nav-item">
-          <Link
-            className="py-1 px-2 text-sm no-underline block text-slate-50 bg-gray-800 rounded-sm border-transparent border border-solid hover:border-blue-500 hover:text-blue-500"
-            to=""
-          >
-            Category
-          </Link>
-        </li>
-      </ul>
-      <div></div>
-    </nav>
+            Sign Out
+          </button>
+        ) : (
+          <>
+            <Link
+              to="/login"
+              target="_blank"
+              className="py-1.5 px-3 border border-solid border-blue-600 hover:bg-gray-800 rounded text-sm"
+            >
+              Login
+            </Link>
+            <Link
+              to="/signup"
+              target="_blank"
+              className="py-1.5 px-3 border border-solid border-blue-600 hover:bg-gray-800 rounded text-sm"
+            >
+              Sign Up
+            </Link>
+          </>
+        )}
+      </div>
+    </header>
   );
 };
 
