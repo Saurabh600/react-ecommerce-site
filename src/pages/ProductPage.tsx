@@ -4,7 +4,6 @@ import { TProduct } from "../types";
 
 import "../assets/css/productpage.css";
 import { Rating } from "../components/common/Rating";
-import Navbar from "../components/Navbar";
 
 export default function ProductPage() {
   const [product, setProduct] = useState<TProduct>();
@@ -57,7 +56,6 @@ export default function ProductPage() {
 
   return (
     <div>
-      <Navbar />
       <div className="product-page-wrapper">
         <div className="side-bar-image">
           <div className="side-bar-image__imglist">
