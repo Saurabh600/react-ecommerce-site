@@ -34,7 +34,7 @@ const ProductsSection: React.FC<Props> = ({ data }) => {
       {data.map((product) => (
         <div
           key={product.id.toString()}
-          className="flex flex-col justify-between no-underline text-inherit p-4 text-gray-100 bg-gray-700 rounded"
+          className="flex flex-col justify-between no-underline text-inherit p-4 text-white bg-gray-700 rounded"
         >
           <img
             src={product.thumbnail}
