@@ -1,25 +1,37 @@
 import { useEffect, useRef, useState } from "react";
-import { useParams } from "react-router-dom";
 import { TProduct } from "../types";
 
 import "../assets/css/productpage.css";
 import { Rating } from "../components/common/Rating";
 
-export default function ProductPage() {
-  const [product, setProduct] = useState<TProduct>();
+type Props = {
+  productId: number;
+};
+
+const ProductPage: React.FC<Props> = ({ productId }) => {
+  const [product, setProduct] = useState<TProduct | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const thumbnailImgRef = useRef<HTMLImageElement>(null);
 
-  const { id } = useParams();
-
   useEffect(() => {
-    if (Number(id) > 100) return;
-    fetch(`https://dummyjson.com/products/${id}`)
-      .then((res) => res.json())
-      .then((data) => setProduct(() => data))
-      .then(() => setLoading(() => false))
-      .catch((err) => console.log(err));
-  }, [id]);
+    if (productId > 100) return;
+
+    const controller = new AbortController();
+    async function loadProduct() {
+      const res = await fetch(`https://dummyjson.com/products/${productId}`, {
+        signal: controller.signal,
+      });
+      const data: TProduct = await res.json();
+      setProduct(() => data);
+      setLoading(false);
+
+      document.title = `${data.title} | React Shopping Cart`;
+    }
+
+    loadProduct();
+
+    return () => controller.abort();
+  }, [productId]);
 
   function onClickImage(e: React.MouseEvent<HTMLImageElement, MouseEvent>) {
     const target = e.target as HTMLImageElement;
@@ -32,7 +44,7 @@ export default function ProductPage() {
     const productCart: number[] = JSON.parse(
       localStorage.getItem("product_cart") || "[]"
     );
-    productCart.push(Number(id));
+    productCart.push(productId);
     localStorage.setItem("product_cart", JSON.stringify(productCart));
   }
 
@@ -44,55 +56,51 @@ export default function ProductPage() {
     );
   }
 
-  if (!product) {
-    return (
-      <div>
-        <h1>Proudct is not available</h1>
-      </div>
-    );
-  }
-
-  document.title = `${product.title} | React Shopping Cart`;
-
   return (
     <div>
-      <div className="product-page-wrapper">
-        <div className="side-bar-image">
-          <div className="side-bar-image__imglist">
-            {product.images.map((url) => (
-              <img
-                className="side-bar-image__img"
-                key={url}
-                src={url}
-                alt="url"
-                onClick={onClickImage}
-              />
-            ))}
+      {!product ? (
+        <h1>Proudct is not available</h1>
+      ) : (
+        <div className="p-4 grid grid-cols-2 bg-gray-800 text-white">
+          <div className="grid grid-cols-10">
+            <div className="col-start-1">
+              {product.images.map((url) => (
+                <img
+                  className="side-bar-image__img"
+                  key={url}
+                  src={url}
+                  alt="url"
+                  onClick={onClickImage}
+                />
+              ))}
+            </div>
+            <img
+              ref={thumbnailImgRef}
+              className="col-start-2 max-w-[550px] h-[550px]"
+              src={product.thumbnail}
+              alt="product image"
+            />
           </div>
-          <img
-            ref={thumbnailImgRef}
-            className="side-bar-image__thumbnail"
-            src={product.thumbnail}
-            alt="product image"
-          />
-        </div>
-        <div className="side-bar-data">
-          <h1 className="side-bar-data__title">{product.title}</h1>
-          <div>Brand: {product.brand}</div>
-          <div>Category: {product.category}</div>
-          <div>Only {product.stock} item left</div>
-          <div className="side-bar-data__desc">{product.description}</div>
-          <Rating className="side-bar-data__rating" count={product.rating} />
-          <div>Offer {product.discountPercentage}% off</div>
-          <div className="side-bar-data__price">
-            <small className="text-small">$</small> <b>{product.price}</b>
-            <small className="text-small-lg">.99</small>
+          <div className="side-bar-data">
+            <h1 className="side-bar-data__title">{product.title}</h1>
+            <div>Brand: {product.brand}</div>
+            <div>Category: {product.category}</div>
+            <div>Only {product.stock} item left</div>
+            <div className="side-bar-data__desc">{product.description}</div>
+            <Rating className="side-bar-data__rating" count={product.rating} />
+            <div>Offer {product.discountPercentage}% off</div>
+            <div className="side-bar-data__price">
+              <small className="text-small">$</small> <b>{product.price}</b>
+              <small className="text-small-lg">.99</small>
+            </div>
+            <button className="btn btn-cart" onClick={onAddtoCart}>
+              Add to Cart
+            </button>
           </div>
-          <button className="btn btn-cart" onClick={onAddtoCart}>
-            Add to Cart
-          </button>
         </div>
-      </div>
+      )}
     </div>
   );
-}
+};
+
+export default ProductPage;

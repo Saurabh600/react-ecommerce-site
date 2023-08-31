@@ -1,11 +1,12 @@
 import { Link } from "react-router-dom";
-import { TProduct } from "../../types";
+import { TProduct, TSetState } from "../../types";
 
 type Props = {
-  data: TProduct[];
+  product: TProduct;
+  setShowOneProduct: TSetState<{ show: boolean; productId: number }>;
 };
 
-const ProductsSection: React.FC<Props> = ({ data }) => {
+const ProductsSection: React.FC<Props> = ({ product, setShowOneProduct }) => {
   const onAddToCart = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     e.stopPropagation();
     const target = e.currentTarget as HTMLButtonElement;
@@ -31,39 +32,39 @@ const ProductsSection: React.FC<Props> = ({ data }) => {
 
   return (
     <>
-      {data.map((product) => (
-        <div
-          key={product.id.toString()}
-          className="flex flex-col justify-between no-underline text-inherit p-4 text-white bg-gray-700 rounded"
+      <div
+        key={product.id.toString()}
+        className="flex flex-col justify-between no-underline text-inherit p-4 text-white bg-gray-700 rounded"
+      >
+        <img
+          src={product.thumbnail}
+          className="block w-full h-[300px]"
+          alt="images"
+        />
+        <Link
+          to=""
+          onClick={() => {
+            setShowOneProduct(() => ({ show: true, productId: product.id }));
+          }}
+          className="no-underline my-4"
         >
-          <img
-            src={product.thumbnail}
-            className="block w-full h-[300px]"
-            alt="images"
-          />
-          <Link
-            to={`/product/${product.id}`}
-            target="_blank"
-            className="no-underline my-4"
-          >
-            <div className="text-center text-lg hover:text-blue-600 hover:font-medium">
-              {product.title}
-            </div>
-          </Link>
-          <div className="text-center mb-2">
-            <small className="text-sm">$</small>{" "}
-            <b className="text-lg">{product.price}</b>
-            <small className="text-sm">.99</small>
+          <div className="text-center text-lg hover:text-blue-600 hover:font-medium">
+            {product.title}
           </div>
-          <button
-            data-product-id={product.id.toString()}
-            className="py-3 text-base text-white bg-blue-600  hover:bg-blue-700 rounded border-none cursor-pointer transition"
-            onClick={onAddToCart}
-          >
-            Add to Cart
-          </button>
+        </Link>
+        <div className="text-center mb-2">
+          <small className="text-sm">$</small>{" "}
+          <b className="text-lg">{product.price}</b>
+          <small className="text-sm">.99</small>
         </div>
-      ))}
+        <button
+          data-product-id={product.id.toString()}
+          className="py-3 text-base text-white bg-blue-600  hover:bg-blue-700 rounded border-none cursor-pointer transition"
+          onClick={onAddToCart}
+        >
+          Add to Cart
+        </button>
+      </div>
     </>
   );
 };

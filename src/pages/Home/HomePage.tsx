@@ -9,10 +9,15 @@ import CategoryList from "./CategoryList";
 import CartSection from "./CartSection";
 
 import { TProduct } from "../../types";
+import ProductPage from "../ProductPage";
 
 const HomePage = () => {
   const [isLogged, setIsLogged] = useState(false);
   const [products, setProducts] = useState<TProduct[]>([]);
+  const [showOneProduct, setShowOneProduct] = useState({
+    show: false,
+    productId: 0,
+  });
   const [loading, setLoading] = useState(true);
   const [showCart, setShowCart] = useState(false);
   const [showCategory, setShowCategory] = useState(false);
@@ -56,12 +61,24 @@ const HomePage = () => {
           <CategoryList setLoading={setLoading} setProducts={setProducts} />
         )}
         <section>
-          <div className="text-gray-100 text-lg mb-3">
-            {products.length} product(s) found.
-          </div>
-          <div className="grid grid-cols-4 gap-4">
-            {!loading && <ProductsSection data={products} />}
-          </div>
+          {showOneProduct.show ? (
+            <ProductPage productId={showOneProduct.productId} />
+          ) : (
+            <>
+              <div className="text-gray-100 text-lg mb-3">
+                {products.length} product(s) found.
+              </div>
+              <div className="grid grid-cols-4 gap-4">
+                {!loading &&
+                  products.map((product) => (
+                    <ProductsSection
+                      product={product}
+                      setShowOneProduct={setShowOneProduct}
+                    />
+                  ))}
+              </div>
+            </>
+          )}
         </section>
       </main>
       <Footer />
